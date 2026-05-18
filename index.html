@@ -86,6 +86,279 @@
     body {
       overflow-x: hidden;
     }
+
+    /* Gallery slideshow: full images + thumbnail navigation */
+    .gallery-section-beauty {
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 15% 10%, rgba(255, 105, 0, 0.12), transparent 28%),
+        radial-gradient(circle at 85% 20%, rgba(36, 91, 51, 0.12), transparent 30%),
+        linear-gradient(180deg, #f8fbf7 0%, #f3f7f2 52%, #ffffff 100%);
+    }
+
+    .gallery-section-beauty::before,
+    .gallery-section-beauty::after {
+      content: "";
+      position: absolute;
+      width: 260px;
+      height: 260px;
+      border-radius: 999px;
+      filter: blur(18px);
+      opacity: 0.42;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .gallery-section-beauty::before {
+      left: -100px;
+      top: 80px;
+      background: rgba(36, 91, 51, 0.14);
+    }
+
+    .gallery-section-beauty::after {
+      right: -110px;
+      bottom: 30px;
+      background: rgba(255, 105, 0, 0.16);
+    }
+
+    .gallery-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.85rem;
+      padding: 0.45rem 0.95rem;
+      border-radius: 999px;
+      color: #245b33;
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid rgba(36, 91, 51, 0.12);
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .gallery-swiper-wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+      overflow: visible;
+      padding: 18px 18px 22px;
+      border-radius: 2rem;
+      background: rgba(255, 255, 255, 0.58);
+      border: 1px solid rgba(255, 255, 255, 0.82);
+      box-shadow: 0 24px 70px rgba(15, 23, 42, 0.10);
+      backdrop-filter: blur(18px);
+    }
+
+    .mySwiper {
+      width: 100%;
+      overflow: hidden;
+      padding: 4px 0 14px;
+      border-radius: 1.75rem;
+    }
+
+    .mySwiper .swiper-wrapper {
+      align-items: stretch;
+    }
+
+    .mySwiper .swiper-slide {
+      height: auto;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      box-sizing: border-box;
+      transition: transform 0.32s ease, opacity 0.32s ease;
+    }
+
+    .mySwiper .swiper-slide img,
+    .mySwiper .swiper-slide .gallery-image {
+      display: block;
+      width: 100%;
+      height: clamp(350px, 35vw, 455px);
+      object-fit: contain;
+      object-position: center;
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(248, 251, 247, 0.96));
+      padding: 14px;
+      border-radius: 1.5rem;
+      box-shadow:
+        0 20px 42px rgba(15, 23, 42, 0.13),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+      border: 1px solid rgba(36, 91, 51, 0.10);
+      transition: transform 0.32s ease, box-shadow 0.32s ease, border-color 0.32s ease;
+    }
+
+    .mySwiper .swiper-slide-active .gallery-image,
+    .mySwiper .swiper-slide-active img {
+      border-color: rgba(255, 105, 0, 0.22);
+      box-shadow:
+        0 22px 52px rgba(15, 23, 42, 0.16),
+        0 0 0 6px rgba(255, 105, 0, 0.04);
+    }
+
+    .mySwiper .swiper-slide img:hover,
+    .mySwiper .swiper-slide .gallery-image:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 26px 62px rgba(15, 23, 42, 0.18);
+    }
+
+    .mySwiper .swiper-pagination {
+      display: none;
+    }
+
+    .gallery-thumbs {
+      width: min(96%, 760px);
+      margin: 20px auto 0;
+      padding: 10px 46px 12px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.88);
+      border: 1px solid rgba(36, 91, 51, 0.12);
+      box-shadow:
+        0 14px 36px rgba(15, 23, 42, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(14px);
+      position: relative;
+    }
+
+    .gallery-thumbs::before,
+    .gallery-thumbs::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 48px;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .gallery-thumbs::before {
+      left: 0;
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0.96), transparent);
+    }
+
+    .gallery-thumbs::after {
+      right: 0;
+      background: linear-gradient(270deg, rgba(255, 255, 255, 0.96), transparent);
+    }
+
+    .gallery-thumbs .swiper-wrapper {
+      align-items: center;
+    }
+
+    .gallery-thumbs .swiper-slide {
+      width: 62px;
+      height: 46px;
+      opacity: 0.58;
+      cursor: pointer;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 2px solid transparent;
+      transition: opacity 0.22s ease, transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+      background: #ffffff;
+      box-shadow: 0 5px 12px rgba(15, 23, 42, 0.08);
+    }
+
+    .gallery-thumbs .swiper-slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.28s ease;
+    }
+
+    .gallery-thumbs .swiper-slide:hover {
+      opacity: 0.92;
+      transform: translateY(-2px);
+    }
+
+    .gallery-thumbs .swiper-slide:hover img {
+      transform: scale(1.08);
+    }
+
+    .gallery-thumbs .swiper-slide-thumb-active {
+      opacity: 1;
+      transform: translateY(-3px) scale(1.06);
+      border-color: #ff6900;
+      box-shadow: 0 10px 22px rgba(255, 105, 0, 0.20);
+    }
+
+    .mySwiper .swiper-button-next,
+    .mySwiper .swiper-button-prev {
+      width: 50px;
+      height: 50px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.96);
+      box-shadow: 0 14px 32px rgba(15, 23, 42, 0.18);
+      color: #245b33 !important;
+      border: 1px solid rgba(36, 91, 51, 0.10);
+      transition: transform 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
+    }
+
+    .mySwiper .swiper-button-next:hover,
+    .mySwiper .swiper-button-prev:hover {
+      transform: scale(1.08);
+      background: #ffffff;
+      box-shadow: 0 18px 42px rgba(15, 23, 42, 0.22);
+    }
+
+    .mySwiper .swiper-button-next::after,
+    .mySwiper .swiper-button-prev::after {
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .gallery-helper-text {
+      margin-top: 12px;
+      text-align: center;
+      color: rgba(55, 65, 81, 0.78);
+      font-size: 0.88rem;
+    }
+
+    @media (max-width: 768px) {
+
+      .gallery-section-beauty::before,
+      .gallery-section-beauty::after {
+        width: 180px;
+        height: 180px;
+      }
+
+      .gallery-swiper-wrap {
+        padding: 12px 10px 18px;
+        border-radius: 1.4rem;
+      }
+
+      .mySwiper .swiper-slide img,
+      .mySwiper .swiper-slide .gallery-image {
+        height: 345px;
+        padding: 8px;
+        border-radius: 1.2rem;
+      }
+
+      .gallery-thumbs {
+        width: min(100%, 520px);
+        margin-top: 14px;
+        padding-left: 18px;
+        padding-right: 18px;
+        border-radius: 22px;
+      }
+
+      .gallery-thumbs .swiper-slide {
+        width: 54px;
+        height: 40px;
+      }
+
+      .mySwiper .swiper-button-next,
+      .mySwiper .swiper-button-prev {
+        display: none;
+      }
+
+      .gallery-helper-text {
+        font-size: 0.78rem;
+      }
+    }
   </style>
 
   <!-- Font Awesome -->
@@ -96,6 +369,7 @@
   <!-- Swiper -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
 </head>
 
 <body class="font-inter">
@@ -679,7 +953,7 @@
           </div>
         </div>
 
-      
+
         <!-- Card -->
         <div
           class="w-full sm:w-[48%] xl:w-[23%] group relative bg-white/70 backdrop-blur-xl rounded-3xl p-8 pt-20 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
@@ -835,6 +1109,8 @@
             </p>
           </div>
         </div>
+        <p class="gallery-helper-text">Click a thumbnail to view the full photograph. Use the arrows to browse moments
+          from the Curesia journey.</p>
       </div>
     </div>
   </section>
@@ -987,9 +1263,10 @@
   </section>
 
   <!-- Gallery -->
-  <section class="w-full bg-gray-50 py-10 md:py-12 px-4 md:px-10">
+  <section class="gallery-section-beauty w-full py-12 md:py-16 px-4 md:px-10">
     <div class="mx-auto px-0 md:px-4">
       <div class="max-w-7xl mx-auto text-center mb-8 md:mb-12">
+        <div class="gallery-eyebrow"><i class="fa-solid fa-camera-retro"></i> Moments of Care</div>
         <h2 class="text-2xl md:text-4xl font-bold spline-sans">
           Our <span class="text-primary">Gallery</span>
         </h2>
@@ -999,112 +1276,162 @@
         </p>
       </div>
 
-      <div class="swiper mySwiper">
-        <div class="swiper-wrapper">
+      <div class="gallery-swiper-wrap">
+        <div class="swiper mySwiper">
+          <div class="swiper-wrapper">
+
+            <div class="swiper-slide">
+              <img src="assets/gallery/childrensession1.png" alt="Curesia gallery image" class="gallery-image" />
+            </div>
+            <div class="swiper-slide">
+              <img src="assets/gallery/childrensession2.png" alt="Curesia gallery image" class="gallery-image" />
+            </div>
+            <div class="swiper-slide">
+              <img src="assets/gallery/img3.JPG" alt="Curesia gallery image" class="gallery-image" />
+            </div>
 
 
-          <div class="swiper-slide">
-            <img src="assets/gallery/img3.JPG" alt="Curesia gallery image"
-              class="rounded-2xl shadow-lg w-full h-72 object-cover" />
+
+            <div class="swiper-slide">
+              <img src="assets/gallery/img1.JPG" alt="Curesia gallery image" class="gallery-image" />
+            </div>
+            <div class="swiper-slide">
+              <img src="assets/gallerypics/0.jpeg" alt="Curesia gallery image" class="gallery-image" />
+            </div>
+
+            <div class="swiper-slide">
+              <img src="assets/gallerypics/1.jpeg" alt="Curesia gallery image" class="gallery-image" />
+            </div>
+
+            <div class="swiper-slide">
+              <img src="assets/gallerypics/2.jpeg" alt="Curesia gallery image" class="gallery-image" />
+            </div>
+
+            <div class="swiper-slide">
+              <img src="assets/gallerypics/3.jpeg" alt="Curesia gallery image" class="gallery-image" />
+            </div>
+
+            <div class="swiper-slide">
+              <img src="assets/gallerypics/4.jpeg" alt="Curesia gallery image" class="gallery-image" />
+            </div>
+
+            <div class="swiper-slide">
+              <img src="assets/gallerypics/5.jpeg" alt="Curesia gallery image" class="gallery-image" />
+            </div>
+
+            <div class="swiper-slide">
+              <img src="assets/gallerypics/6.jpeg" alt="Curesia gallery image" class="gallery-image" />
+            </div>
+
+            <div class="swiper-slide">
+              <img src="assets/gallerypics/7.jpeg" alt="Curesia gallery image" class="gallery-image" />
+            </div>
+
+            <div class="swiper-slide">
+              <img src="assets/gallerypics/8.jpeg" alt="Curesia gallery image" class="gallery-image" />
+            </div>
+
+            <div class="swiper-slide">
+              <img src="assets/gallerypics/9.jpeg" alt="Curesia gallery image" class="gallery-image" />
+            </div>
+
+            <div class="swiper-slide">
+              <img src="assets/gallerypics/10.jpeg" alt="Curesia gallery image" class="gallery-image" />
+            </div>
+
+            <div class="swiper-slide">
+              <img src="assets/gallerypics/11.jpeg" alt="Curesia gallery image" class="gallery-image" />
+            </div>
+
+            <div class="swiper-slide">
+              <img src="assets/gallerypics/12.jpeg" alt="Curesia gallery image" class="gallery-image" />
+            </div>
+
+            <div class="swiper-slide">
+              <img src="assets/gallerypics/13.jpeg" alt="Curesia gallery image" class="gallery-image" />
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
           </div>
 
-
-
-          <div class="swiper-slide">
-            <img src="assets/gallery/img1.JPG" alt="Curesia gallery image"
-              class="rounded-2xl shadow-lg w-full h-72 object-cover" />
-          </div>
-          <div class="swiper-slide">
-            <img src="assets/gallerypics/0.jpeg" alt="Curesia gallery image"
-              class="rounded-2xl shadow-lg w-full h-72 object-cover" />
-          </div>
-
-          <div class="swiper-slide">
-            <img src="assets/gallerypics/1.jpeg" alt="Curesia gallery image"
-              class="rounded-2xl shadow-lg w-full h-72 object-cover" />
-          </div>
-
-          <div class="swiper-slide">
-            <img src="assets/gallerypics/2.jpeg" alt="Curesia gallery image"
-              class="rounded-2xl shadow-lg w-full h-72 object-cover" />
-          </div>
-
-          <div class="swiper-slide">
-            <img src="assets/gallerypics/3.jpeg" alt="Curesia gallery image"
-              class="rounded-2xl shadow-lg w-full h-72 object-cover" />
-          </div>
-
-          <div class="swiper-slide">
-            <img src="assets/gallerypics/4.jpeg" alt="Curesia gallery image"
-              class="rounded-2xl shadow-lg w-full h-72 object-cover" />
-          </div>
-
-          <div class="swiper-slide">
-            <img src="assets/gallerypics/5.jpeg" alt="Curesia gallery image"
-              class="rounded-2xl shadow-lg w-full h-72 object-cover" />
-          </div>
-
-          <div class="swiper-slide">
-            <img src="assets/gallerypics/6.jpeg" alt="Curesia gallery image"
-              class="rounded-2xl shadow-lg w-full h-72 object-cover" />
-          </div>
-
-          <div class="swiper-slide">
-            <img src="assets/gallerypics/7.jpeg" alt="Curesia gallery image"
-              class="rounded-2xl shadow-lg w-full h-72 object-cover" />
-          </div>
-
-          <div class="swiper-slide">
-            <img src="assets/gallerypics/8.jpeg" alt="Curesia gallery image"
-              class="rounded-2xl shadow-lg w-full h-72 object-cover" />
-          </div>
-
-          <div class="swiper-slide">
-            <img src="assets/gallerypics/9.jpeg" alt="Curesia gallery image"
-              class="rounded-2xl shadow-lg w-full h-72 object-cover" />
-          </div>
-
-          <div class="swiper-slide">
-            <img src="assets/gallerypics/10.jpeg" alt="Curesia gallery image"
-              class="rounded-2xl shadow-lg w-full h-72 object-cover" />
-          </div>
-
-          <div class="swiper-slide">
-            <img src="assets/gallerypics/11.jpeg" alt="Curesia gallery image"
-              class="rounded-2xl shadow-lg w-full h-72 object-cover" />
-          </div>
-
-          <div class="swiper-slide">
-            <img src="assets/gallerypics/12.jpeg" alt="Curesia gallery image"
-              class="rounded-2xl shadow-lg w-full h-72 object-cover" />
-          </div>
-
-          <div class="swiper-slide">
-            <img src="assets/gallerypics/13.jpeg" alt="Curesia gallery image"
-              class="rounded-2xl shadow-lg w-full h-72 object-cover" />
-          </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+          <div class="swiper-button-next !text-primary"></div>
+          <div class="swiper-button-prev !text-primary"></div>
+          <div class="swiper-pagination"></div>
         </div>
 
-        <div class="swiper-button-next !text-primary"></div>
-        <div class="swiper-button-prev !text-primary"></div>
-        <div class="swiper-pagination"></div>
+        <div class="swiper gallery-thumbs" aria-label="Gallery thumbnail navigation">
+          <div class="swiper-wrapper">
+            <div class="swiper-slide">
+              <img src="assets/gallery/childrensession1.png" alt="Gallery thumbnail 1" />
+            </div>
+            <div class="swiper-slide">
+              <img src="assets/gallery/childrensession2.png" alt="Gallery thumbnail 2" />
+            </div>
+            <div class="swiper-slide">
+              <img src="assets/gallery/img3.JPG" alt="Gallery thumbnail 3" />
+            </div>
+            <div class="swiper-slide">
+              <img src="assets/gallery/img1.JPG" alt="Gallery thumbnail 4" />
+            </div>
+            <div class="swiper-slide">
+              <img src="assets/gallerypics/0.jpeg" alt="Gallery thumbnail 5" />
+            </div>
+            <div class="swiper-slide">
+              <img src="assets/gallerypics/1.jpeg" alt="Gallery thumbnail 6" />
+            </div>
+            <div class="swiper-slide">
+              <img src="assets/gallerypics/2.jpeg" alt="Gallery thumbnail 7" />
+            </div>
+            <div class="swiper-slide">
+              <img src="assets/gallerypics/3.jpeg" alt="Gallery thumbnail 8" />
+            </div>
+            <div class="swiper-slide">
+              <img src="assets/gallerypics/4.jpeg" alt="Gallery thumbnail 9" />
+            </div>
+            <div class="swiper-slide">
+              <img src="assets/gallerypics/5.jpeg" alt="Gallery thumbnail 10" />
+            </div>
+            <div class="swiper-slide">
+              <img src="assets/gallerypics/6.jpeg" alt="Gallery thumbnail 11" />
+            </div>
+            <div class="swiper-slide">
+              <img src="assets/gallerypics/7.jpeg" alt="Gallery thumbnail 12" />
+            </div>
+            <div class="swiper-slide">
+              <img src="assets/gallerypics/8.jpeg" alt="Gallery thumbnail 13" />
+            </div>
+            <div class="swiper-slide">
+              <img src="assets/gallerypics/9.jpeg" alt="Gallery thumbnail 14" />
+            </div>
+            <div class="swiper-slide">
+              <img src="assets/gallerypics/10.jpeg" alt="Gallery thumbnail 15" />
+            </div>
+            <div class="swiper-slide">
+              <img src="assets/gallerypics/11.jpeg" alt="Gallery thumbnail 16" />
+            </div>
+            <div class="swiper-slide">
+              <img src="assets/gallerypics/12.jpeg" alt="Gallery thumbnail 17" />
+            </div>
+            <div class="swiper-slide">
+              <img src="assets/gallerypics/13.jpeg" alt="Gallery thumbnail 18" />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -1133,14 +1460,28 @@
 
 
   <script>
-    var swiper = new Swiper(".mySwiper", {
+    const galleryThumbs = new Swiper(".gallery-thumbs", {
+      spaceBetween: 8,
+      slidesPerView: "auto",
+      freeMode: true,
+      watchSlidesProgress: true,
+      slideToClickedSlide: true,
+    });
+
+    const swiper = new Swiper(".mySwiper", {
       slidesPerView: 1,
-      spaceBetween: 20,
+      spaceBetween: 16,
       loop: true,
+      speed: 650,
+      grabCursor: true,
+      watchSlidesProgress: true,
       autoplay: {
         delay: 3000,
         disableOnInteraction: false,
         pauseOnMouseEnter: true
+      },
+      thumbs: {
+        swiper: galleryThumbs,
       },
       pagination: {
         el: ".swiper-pagination",
@@ -1151,8 +1492,9 @@
         prevEl: ".swiper-button-prev",
       },
       breakpoints: {
-        640: { slidesPerView: 2 },
-        1024: { slidesPerView: 4 },
+        640: { slidesPerView: 1, spaceBetween: 18 },
+        768: { slidesPerView: 2, spaceBetween: 22 },
+        1024: { slidesPerView: 3, spaceBetween: 26 },
       },
     });
   </script>
