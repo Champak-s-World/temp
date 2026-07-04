@@ -290,6 +290,13 @@
       box-shadow: 0 10px 22px rgba(255, 105, 0, 0.20);
     }
 
+    .gallery-thumbs .swiper-slide:focus-visible,
+    .mySwiper .swiper-button-next:focus-visible,
+    .mySwiper .swiper-button-prev:focus-visible {
+      outline: 3px solid #ff6900;
+      outline-offset: 4px;
+    }
+
     .mySwiper .swiper-button-next,
     .mySwiper .swiper-button-prev {
       width: 50px;
@@ -412,10 +419,9 @@
   <!-- =========================================================
        GALLERY / SLIDESHOW SECTION
        Easy editing guide:
-       1. To ADD a photo: add the same image path once in MAIN SLIDES
-          and once in THUMBNAILS, at the same position.
-       2. To REMOVE a photo: remove it from both MAIN SLIDES and THUMBNAILS.
-       3. The number and order of slides and thumbnails must always match.
+       1. To ADD a photo: add one entry to the galleryImages list in the script below.
+       2. To REMOVE a photo: remove that one entry from galleryImages.
+       3. Main slides and thumbnails are created automatically from the same list.
        4. childrensession2.png has intentionally been removed.
        ========================================================= -->
   <section id="gallery" class="gallery-section-beauty w-full py-12 md:py-16 px-4 md:px-10">
@@ -433,141 +439,19 @@
       </div>
 
       <div class="gallery-swiper-wrap">
-        <!-- MAIN SLIDES: large images shown in the slideshow. -->
+        <!-- MAIN SLIDES: JavaScript fills this from one shared image list. -->
         <div class="swiper mySwiper">
-          <div class="swiper-wrapper">
-            <!-- Slide 1: keep this in the same order as Thumbnail 1. -->
-            <div class="swiper-slide">
-              <img src="assets/gallery/img3.JPG" alt="Curesia gallery image 1" class="gallery-image" />
-            </div>
-            <!-- Slide 2: keep this in the same order as Thumbnail 2. -->
-            <div class="swiper-slide">
-              <img src="assets/gallery/img1.JPG" alt="Curesia gallery image 2" class="gallery-image" />
-            </div>
-            <!-- Slide 3: keep this in the same order as Thumbnail 3. -->
-            <div class="swiper-slide">
-              <img src="assets/gallerypics/0.jpeg" alt="Curesia gallery image 3" class="gallery-image" />
-            </div>
-            <!-- Slide 4: keep this in the same order as Thumbnail 4. -->
-            <div class="swiper-slide">
-              <img src="assets/gallerypics/1.jpeg" alt="Curesia gallery image 4" class="gallery-image" />
-            </div>
-            <!-- Slide 5: keep this in the same order as Thumbnail 5. -->
-            <div class="swiper-slide">
-              <img src="assets/gallerypics/2.jpeg" alt="Curesia gallery image 5" class="gallery-image" />
-            </div>
-            <!-- Slide 6: keep this in the same order as Thumbnail 6. -->
-            <div class="swiper-slide">
-              <img src="assets/gallerypics/3.jpeg" alt="Curesia gallery image 6" class="gallery-image" />
-            </div>
-            <!-- Slide 7: keep this in the same order as Thumbnail 7. -->
-            <div class="swiper-slide">
-              <img src="assets/gallerypics/5.jpeg" alt="Curesia gallery image 7" class="gallery-image" />
-            </div>
-            <!-- Slide 8: keep this in the same order as Thumbnail 8. -->
-            <div class="swiper-slide">
-              <img src="assets/gallerypics/7.jpeg" alt="Curesia gallery image 8" class="gallery-image" />
-            </div>
-            <!-- Slide 9: keep this in the same order as Thumbnail 9. -->
-            <div class="swiper-slide">
-              <img src="assets/gallerypics/8.jpeg" alt="Curesia gallery image 9" class="gallery-image" />
-            </div>
-            <!-- Slide 10: keep this in the same order as Thumbnail 10. -->
-            <div class="swiper-slide">
-              <img src="assets/gallerypics/9.jpeg" alt="Curesia gallery image 10" class="gallery-image" />
-            </div>
-            <!-- Slide 11: keep this in the same order as Thumbnail 11. -->
-            <div class="swiper-slide">
-              <img src="assets/gallerypics/10.jpeg" alt="Curesia gallery image 11" class="gallery-image" />
-            </div>
-            <!-- Slide 12: keep this in the same order as Thumbnail 12. -->
-            <div class="swiper-slide">
-              <img src="assets/gallerypics/11.jpeg" alt="Curesia gallery image 12" class="gallery-image" />
-            </div>
-            <!-- Slide 13: keep this in the same order as Thumbnail 13. -->
-            <div class="swiper-slide">
-              <img src="assets/gallerypics/12.jpeg" alt="Curesia gallery image 13" class="gallery-image" />
-            </div>
-            <!-- Slide 14: keep this in the same order as Thumbnail 14. -->
-            <div class="swiper-slide">
-              <img src="assets/gallerypics/13.jpeg" alt="Curesia gallery image 14" class="gallery-image" />
-            </div>
-            <!-- Slide 15: keep this in the same order as Thumbnail 15. -->
-            <div class="swiper-slide">
-              <img src="assets/gallery/childrensession1.png" alt="Curesia gallery image 15" class="gallery-image" />
-            </div>
-          </div>
+          <div class="swiper-wrapper" id="galleryMainSlides"></div>
 
           <!-- Slideshow controls. Swiper uses these class names in the script below. -->
-          <div class="swiper-button-next !text-primary" aria-label="Next gallery image"></div>
-          <div class="swiper-button-prev !text-primary" aria-label="Previous gallery image"></div>
+          <div class="swiper-button-next !text-primary" aria-label="Next gallery image" tabindex="0"></div>
+          <div class="swiper-button-prev !text-primary" aria-label="Previous gallery image" tabindex="0"></div>
           <div class="swiper-pagination"></div>
         </div>
 
-        <!-- THUMBNAILS: small clickable images below the main slideshow. -->
+        <!-- THUMBNAILS: JavaScript fills this from the same shared image list. -->
         <div class="swiper gallery-thumbs" aria-label="Gallery thumbnail navigation">
-          <div class="swiper-wrapper">
-            <!-- Thumbnail 1: must match Slide 1. -->
-            <div class="swiper-slide">
-              <img src="assets/gallery/img3.JPG" alt="Gallery thumbnail 1" />
-            </div>
-            <!-- Thumbnail 2: must match Slide 2. -->
-            <div class="swiper-slide">
-              <img src="assets/gallery/img1.JPG" alt="Gallery thumbnail 2" />
-            </div>
-            <!-- Thumbnail 3: must match Slide 3. -->
-            <div class="swiper-slide">
-              <img src="assets/gallerypics/0.jpeg" alt="Gallery thumbnail 3" />
-            </div>
-            <!-- Thumbnail 4: must match Slide 4. -->
-            <div class="swiper-slide">
-              <img src="assets/gallerypics/1.jpeg" alt="Gallery thumbnail 4" />
-            </div>
-            <!-- Thumbnail 5: must match Slide 5. -->
-            <div class="swiper-slide">
-              <img src="assets/gallerypics/2.jpeg" alt="Gallery thumbnail 5" />
-            </div>
-            <!-- Thumbnail 6: must match Slide 6. -->
-            <div class="swiper-slide">
-              <img src="assets/gallerypics/3.jpeg" alt="Gallery thumbnail 6" />
-            </div>
-            <!-- Thumbnail 7: must match Slide 7. -->
-            <div class="swiper-slide">
-              <img src="assets/gallerypics/5.jpeg" alt="Gallery thumbnail 7" />
-            </div>
-            <!-- Thumbnail 8: must match Slide 8. -->
-            <div class="swiper-slide">
-              <img src="assets/gallerypics/7.jpeg" alt="Gallery thumbnail 8" />
-            </div>
-            <!-- Thumbnail 9: must match Slide 9. -->
-            <div class="swiper-slide">
-              <img src="assets/gallerypics/8.jpeg" alt="Gallery thumbnail 9" />
-            </div>
-            <!-- Thumbnail 10: must match Slide 10. -->
-            <div class="swiper-slide">
-              <img src="assets/gallerypics/9.jpeg" alt="Gallery thumbnail 10" />
-            </div>
-            <!-- Thumbnail 11: must match Slide 11. -->
-            <div class="swiper-slide">
-              <img src="assets/gallerypics/10.jpeg" alt="Gallery thumbnail 11" />
-            </div>
-            <!-- Thumbnail 12: must match Slide 12. -->
-            <div class="swiper-slide">
-              <img src="assets/gallerypics/11.jpeg" alt="Gallery thumbnail 12" />
-            </div>
-            <!-- Thumbnail 13: must match Slide 13. -->
-            <div class="swiper-slide">
-              <img src="assets/gallerypics/12.jpeg" alt="Gallery thumbnail 13" />
-            </div>
-            <!-- Thumbnail 14: must match Slide 14. -->
-            <div class="swiper-slide">
-              <img src="assets/gallerypics/13.jpeg" alt="Gallery thumbnail 14" />
-            </div>
-            <!-- Thumbnail 15: must match Slide 15. -->
-            <div class="swiper-slide">
-              <img src="assets/gallery/childrensession1.png" alt="Gallery thumbnail 15" />
-            </div>
-          </div>
+          <div class="swiper-wrapper" id="galleryThumbSlides"></div>
         </div>
 
         <!-- Helper text for visitors. -->
@@ -1476,6 +1360,93 @@
        - loop: true means the gallery repeats forever.
        ========================================================= */
 
+    // One shared source of truth for both main slides and thumbnails.
+    // To add, remove, or reorder photos, edit only this list.
+    const galleryImages = [
+      {
+        src: "assets/gallery/img3.JPG",
+        alt: "Curesia clinic activity and care moment",
+      },
+      {
+        src: "assets/gallery/img1.JPG",
+        alt: "Curesia therapy session at the clinic",
+      },
+      {
+        src: "assets/gallerypics/0.jpeg",
+        alt: "Curesia mental health awareness program photograph",
+      },
+      {
+        src: "assets/gallerypics/1.jpeg",
+        alt: "Curesia counseling and wellness activity photograph",
+      },
+      {
+        src: "assets/gallerypics/2.jpeg",
+        alt: "Curesia team interaction during a wellness session",
+      },
+      {
+        src: "assets/gallerypics/3.jpeg",
+        alt: "Curesia community mental health care moment",
+      },
+      {
+        src: "assets/gallerypics/5.jpeg",
+        alt: "Curesia workshop and patient support activity",
+      },
+      {
+        src: "assets/gallerypics/7.jpeg",
+        alt: "Curesia clinic gallery moment with visitors",
+      },
+      {
+        src: "assets/gallerypics/8.jpeg",
+        alt: "Curesia care and counseling environment",
+      },
+      {
+        src: "assets/gallerypics/9.jpeg",
+        alt: "Curesia mental wellness session photograph",
+      },
+      {
+        src: "assets/gallerypics/10.jpeg",
+        alt: "Curesia team and clinic activity photograph",
+      },
+      {
+        src: "assets/gallerypics/11.jpeg",
+        alt: "Curesia awareness and emotional wellbeing activity",
+      },
+      {
+        src: "assets/gallerypics/12.jpeg",
+        alt: "Curesia mental health support program photograph",
+      },
+      {
+        src: "assets/gallerypics/13.jpeg",
+        alt: "Curesia gallery photograph from a care program",
+      },
+      {
+        src: "assets/gallery/childrensession1.png",
+        alt: "Curesia child psychology session and support activity",
+      },
+    ];
+
+    const galleryMainSlides = document.getElementById("galleryMainSlides");
+    const galleryThumbSlides = document.getElementById("galleryThumbSlides");
+
+    galleryImages.forEach((image, index) => {
+      const loadingType = index === 0 ? "eager" : "lazy";
+      const fetchPriority = index === 0 ? "high" : "auto";
+
+      galleryMainSlides.insertAdjacentHTML(
+        "beforeend",
+        `<div class="swiper-slide">
+          <img src="${image.src}" alt="${image.alt}" class="gallery-image" loading="${loadingType}" fetchpriority="${fetchPriority}" />
+        </div>`
+      );
+
+      galleryThumbSlides.insertAdjacentHTML(
+        "beforeend",
+        `<div class="swiper-slide" role="button" tabindex="0" aria-label="Show image ${index + 1}: ${image.alt}">
+          <img src="${image.src}" alt="Thumbnail: ${image.alt}" loading="lazy" />
+        </div>`
+      );
+    });
+
     // Thumbnail slider below the main gallery.
     const galleryThumbs = new Swiper(".gallery-thumbs", {
       spaceBetween: 8,
@@ -1483,6 +1454,9 @@
       freeMode: true,
       watchSlidesProgress: true,
       slideToClickedSlide: true,
+      keyboard: {
+        enabled: true,
+      },
     });
 
     // Main gallery slider. It is connected to galleryThumbs through the thumbs option.
@@ -1493,10 +1467,13 @@
       speed: 650,
       grabCursor: true,
       watchSlidesProgress: true,
+      keyboard: {
+        enabled: true,
+      },
 
-      // Auto change image every 3 seconds.
+      // Auto change image every 5 seconds for a calmer clinic experience.
       autoplay: {
-        delay: 3000,
+        delay: 5000,
         disableOnInteraction: false,
         pauseOnMouseEnter: true
       },
@@ -1524,6 +1501,16 @@
         768: { slidesPerView: 2, spaceBetween: 22 },
         1024: { slidesPerView: 3, spaceBetween: 26 },
       },
+    });
+
+    // Make thumbnail activation work with Enter and Space keys.
+    document.querySelectorAll(".gallery-thumbs .swiper-slide").forEach((thumb, index) => {
+      thumb.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          swiper.slideToLoop(index);
+        }
+      });
     });
   </script>
 </body>
