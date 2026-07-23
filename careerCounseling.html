@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#245b33">
     <title>Career Counselling in Ranchi | Guidance for Students & Professionals | Curesia</title>
 
     <meta name="description"
@@ -26,8 +27,8 @@
     <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon_io/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon_io/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon_io/favicon-16x16.png">
-    <link rel="manifest" href="assets/favicon_io/site.webmanifest">
-    <link rel="icon" href="assets/favicon_io/favicon.ico" type="image/x-icon">
+  <link rel="manifest" href="/site.webmanifest">
+<link rel="icon" href="assets/favicon_io/favicon.ico" type="image/x-icon">
     
     <!-- Google tag (gtag.js) -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-X77FNWF247"></script>
@@ -244,6 +245,12 @@
 
     <!-------- Including Ended ---------->
 
+
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => navigator.serviceWorker.register("/sw.js"));
+    }
+  </script>
 </body>
 
 </html>

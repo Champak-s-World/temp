@@ -370,6 +370,7 @@
       .footer-grid { grid-template-columns: 1fr; }
     }
   </style>
+  <link rel="manifest" href="/site.webmanifest">
 </head>
 
 <body id="top">
@@ -844,6 +845,12 @@
       }
 
       return false;
+    }
+  </script>
+
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => navigator.serviceWorker.register("/sw.js"));
     }
   </script>
 </body>
