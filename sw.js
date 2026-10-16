@@ -1,4 +1,4 @@
-const CACHE_NAME = "curesia-site-v1";
+const CACHE_NAME = "curesia-site-v2";
 const CORE_FILES = [
   "/",
   "/index.html",
