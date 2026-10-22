@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
     steps:
@@ -26,6 +26,15 @@ jobs:
       - name: Generate Flutter Android scaffold
         working-directory: /tmp/screen-recorder-build/champaks_screen_recorder
         run: bash scripts/prepare_android.sh
+      - name: Select preinstalled Android NDK
+        working-directory: /tmp/screen-recorder-build/champaks_screen_recorder
+        run: |
+          set -euo pipefail
+          echo "Runner preinstalled NDK: $ANDROID_NDK_HOME"
+          test -d "$ANDROID_NDK_HOME"
+          NDK_VERSION="$(basename "$ANDROID_NDK_HOME")"
+          sed -i "s/ndkVersion = flutter.ndkVersion/ndkVersion = \"$NDK_VERSION\"/" android/app/build.gradle.kts
+          grep ndkVersion android/app/build.gradle.kts
       - name: Dart static analysis
         working-directory: /tmp/screen-recorder-build/champaks_screen_recorder
         run: flutter analyze --no-fatal-infos lib/main.dart
