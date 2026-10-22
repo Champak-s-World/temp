@@ -26,6 +26,9 @@ jobs:
       - name: Generate Flutter Android scaffold
         working-directory: /tmp/screen-recorder-build/champaks_screen_recorder
         run: bash scripts/prepare_android.sh
+      - name: Deduplicate generated Kotlin classes
+        working-directory: /tmp/screen-recorder-build/champaks_screen_recorder
+        run: rm -rf android/app/src/main/kotlin/kotlin
       - name: Select preinstalled Android NDK
         working-directory: /tmp/screen-recorder-build/champaks_screen_recorder
         run: |
