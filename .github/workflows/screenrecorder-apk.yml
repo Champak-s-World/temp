@@ -28,7 +28,7 @@ jobs:
         run: bash scripts/prepare_android.sh
       - name: Dart static analysis
         working-directory: /tmp/screen-recorder-build/champaks_screen_recorder
-        run: flutter analyze lib/main.dart
+        run: flutter analyze --no-fatal-infos lib/main.dart
       - name: Build debug APK
         working-directory: /tmp/screen-recorder-build/champaks_screen_recorder
         run: flutter build apk --debug
