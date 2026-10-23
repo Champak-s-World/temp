@@ -1,0 +1,63 @@
+name: Build unsigned Play release AAB (Screen Recorder)
+on:
+  push:
+    branches: [screen-recorder-teaching-edition]
+    paths:
+      - build-assets/champaks_screen_recorder_release_source.zip
+      - .github/workflows/screenrecorder-release.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  appbundle:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - name: Unpack Flutter source
+        run: |
+          mkdir -p /tmp/screenrecorder-play
+          unzip -q build-assets/champaks_screen_recorder_release_source.zip -d /tmp/screenrecorder-play
+      - name: Generate Flutter Android project
+        working-directory: /tmp/screenrecorder-play/champaks_screen_recorder
+        run: bash scripts/prepare_android.sh
+      - name: Use preinstalled Android NDK
+        working-directory: /tmp/screenrecorder-play/champaks_screen_recorder
+        run: |
+          test -d "$ANDROID_NDK_HOME"
+          NDK_VERSION="$(basename "$ANDROID_NDK_HOME")"
+          sed -i "s/ndkVersion = flutter.ndkVersion/ndkVersion = \"$NDK_VERSION\"/" android/app/build.gradle.kts
+          grep ndkVersion android/app/build.gradle.kts
+      - name: Disable debug signing in release build
+        working-directory: /tmp/screenrecorder-play/champaks_screen_recorder
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('android/app/build.gradle.kts')
+          s=p.read_text()
+          old='signingConfig = signingConfigs.getByName("debug")'
+          assert old in s, 'Flutter template changed: cannot verify release signing safety'
+          p.write_text(s.replace(old, 'signingConfig = null'))
+          print('Unsigned release configuration enabled')
+          PY
+      - name: Analyze source
+        working-directory: /tmp/screenrecorder-play/champaks_screen_recorder
+        run: flutter analyze --no-fatal-infos lib/main.dart
+      - name: Build unsigned production AAB
+        working-directory: /tmp/screenrecorder-play/champaks_screen_recorder
+        run: flutter build appbundle --release --build-name=1.0.0 --build-number=1
+      - name: Stage unsigned AAB
+        run: |
+          cp /tmp/screenrecorder-play/champaks_screen_recorder/build/app/outputs/bundle/release/app-release.aab Champaks-Screen-Recorder-v1.0.0-unsigned.aab
+          unzip -t Champaks-Screen-Recorder-v1.0.0-unsigned.aab | tail -1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Champaks-Screen-Recorder-v1.0.0-Unsigned-Play-AAB
+          path: Champaks-Screen-Recorder-v1.0.0-unsigned.aab
+          if-no-files-found: error
