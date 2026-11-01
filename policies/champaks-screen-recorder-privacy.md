@@ -30,9 +30,15 @@ From version 1.2.0, the always-visible recording toolbar (red REC timer, Pause/R
 
 This teaching-focused version requests Android's **entire default display** for each recording, so that app transitions, pop-ups, newly opened windows and other displayed apps can be captured together. Android asks for screen-recording consent each session. Display capture can include sensitive notifications or other private material; users should hide sensitive information before approving recording. Android may restrict or blank protected windows. Recording is saved locally unless the user chooses to share it.
 
-## Controls excluded from recorded video (v1.2.4)
+## Hybrid recording and floating controls (v1.2.5)
 
-The floating control panel remains visible on the phone but is marked as a secure Android window, so its buttons and timer are excluded from screen recording. User-drawn pen strokes, circles, and arrows are added to the saved video separately. Some Android devices may show a blank or black area in place of the protected control panel, rather than the underlying content. The app continues to require screen recording consent for each session.
+The user can dock the floating recording controls at the top or bottom and collapse the editing tools. The red recording indicator, Pause/Resume and Stop remain accessible while recording. The control window no longer uses the secure-window exclusion that caused black output on some Android phones.
+
+In full-display mode, video is cropped and resized along the toolbar edge so the controls are absent from the exported MP4. **This removes part of the top or bottom of the visible screen**, even though it remains visible to the user on the phone. An optional experimental smart-repair mode may insert recently captured unobstructed pixels into a covered region. It cannot reliably recover moving or previously unseen content and falls back to cropping. Users should review the exported video before sharing.
+
+On Android 14 and later, the user may choose Android's selected-app capture, which records one chosen app rather than new windows from other apps. App sharing depends on the Android system's permission dialog. User-drawn pen, circle and arrow annotations are added to the encoded MP4 frames independently of the floating toolbar.
+
+The app continues to process screen and optional microphone recordings locally, and protected Android windows remain subject to system restrictions.
 
 ## Future changes
 
