@@ -30,6 +30,10 @@ From version 1.2.0, the always-visible recording toolbar (red REC timer, Pause/R
 
 This teaching-focused version requests Android's **entire default display** for each recording, so that app transitions, pop-ups, newly opened windows and other displayed apps can be captured together. Android asks for screen-recording consent each session. Display capture can include sensitive notifications or other private material; users should hide sensitive information before approving recording. Android may restrict or blank protected windows. Recording is saved locally unless the user chooses to share it.
 
+## Controls excluded from recorded video (v1.2.4)
+
+The floating control panel remains visible on the phone but is marked as a secure Android window, so its buttons and timer are excluded from screen recording. User-drawn pen strokes, circles, and arrows are added to the saved video separately. Some Android devices may show a blank or black area in place of the protected control panel, rather than the underlying content. The app continues to require screen recording consent for each session.
+
 ## Future changes
 
 If we add Internet services, ads, analytics, cloud storage or other data processing, we will update this policy before deploying those features.
