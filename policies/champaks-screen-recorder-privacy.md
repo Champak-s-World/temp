@@ -1,6 +1,6 @@
 # Champak's Screen Recorder — Privacy Policy
 
-**Effective date:** 23 October 2026
+**Effective date:** 1 November 2026
 
 Champak's Screen Recorder is an Android utility for recording software demonstrations and tutorials. The app starts screen recording only after the user approves Android's screen-capture permission prompt for each session.
 
@@ -21,6 +21,10 @@ Recordings remain on the device until the user deletes them using the built-in L
 Screen recording requires Android's per-session MediaProjection consent. Microphone access is requested when narration is selected. Android may ask for notification permission for recording controls; it is optional. Android's foreground service permissions allow a visible, user-initiated recording to continue after switching apps. The app does not request contacts, location, camera or broad file-storage access.
 
 Certain apps and sensitive content use Android protections that restrict screen recording. Users should avoid recording other people's private information without permission.
+
+## Optional on-screen teaching annotations and visible taps
+
+In version 1.1.0 the optional pen, circle and arrow toolbar may be drawn over other apps only if the user enables Android's **Draw over other apps** special access. This permission allows a visible overlay for instruction; it does not read or upload information from other apps. Tap dots are controlled by the user's Android **Show taps** Developer options setting, not by a background accessibility or input-monitoring service. The user can disable the floating teaching tools at any time. Annotations are included in the screen video saved locally when they are visible to MediaProjection.
 
 ## Future changes
 
