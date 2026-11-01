@@ -1,0 +1,53 @@
+name: Publish Screen Recorder v1.2.6 public APK downloads
+on:
+  push:
+    branches:
+      - screen-recorder-teaching-edition
+    paths:
+      - .github/workflows/screenrecorder-publish-v126.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Download verified APK from successful v1.2.6 build
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p release-build
+          gh run download 41287512209 --repo "${GITHUB_REPOSITORY}" --name Champaks-Screen-Recorder-v1.2.6-APK-and-AAB --dir release-build
+          test -s release-build/Champaks-Screen-Recorder-Teaching-v1.2.6-debug.apk
+          test -s release-build/Champaks-Screen-Recorder-v1.2.6-unsigned.aab
+          unzip -tqq release-build/Champaks-Screen-Recorder-Teaching-v1.2.6-debug.apk
+          ls -lh release-build/
+      - name: Create compressed mobile-friendly ZIP
+        working-directory: release-build
+        run: |
+          zip -9 -q Champaks-Screen-Recorder-v1.2.6-APK-Download.zip Champaks-Screen-Recorder-Teaching-v1.2.6-debug.apk
+          unzip -tqq Champaks-Screen-Recorder-v1.2.6-APK-Download.zip
+          sha256sum Champaks-Screen-Recorder-Teaching-v1.2.6-debug.apk
+          ls -lh *.apk *.zip
+      - name: Publish public prerelease assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="screen-recorder-v1.2.6"
+          files=(
+            release-build/Champaks-Screen-Recorder-Teaching-v1.2.6-debug.apk
+            release-build/Champaks-Screen-Recorder-v1.2.6-APK-Download.zip
+          )
+          if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$tag" "${files[@]}" --clobber --repo "$GITHUB_REPOSITORY"
+          else
+            gh release create "$tag" "${files[@]}" --repo "$GITHUB_REPOSITORY" \
+              --title "Champak's Screen Recorder v1.2.6 (Android test APK)" \
+              --target screen-recorder-teaching-edition \
+              --prerelease \
+              --notes "Testing build 9 with an always-visible floating DRAG handle, top/bottom docking and compact toolbar. The ZIP contains the same debug APK and is easier to download on some phones. Extract the ZIP before installing. This is a DEBUG testing build, not the signed Google Play application bundle. Keep Google Play production on the verified signed AAB from the separate private signing process."
+          fi
+          gh release view "$tag" --json assets,url --repo "$GITHUB_REPOSITORY"
