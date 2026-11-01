@@ -1,0 +1,70 @@
+name: Screen Recorder v1.2.0 teaching tools APK and AAB
+on:
+  push:
+    branches: [screen-recorder-teaching-edition]
+    paths:
+      - build-assets/champaks_screen_recorder_v120_source.zip
+      - .github/workflows/screenrecorder-v120.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - name: Extract release source
+        run: |
+          mkdir -p /tmp/screenrecorder-110
+          unzip -q build-assets/champaks_screen_recorder_v120_source.zip -d /tmp/screenrecorder-110
+      - name: Prepare Android project
+        working-directory: /tmp/screenrecorder-110/champaks_screen_recorder
+        run: |
+          bash scripts/prepare_android.sh
+          rm -rf android/app/src/main/kotlin/kotlin
+      - name: Select preinstalled Android NDK
+        working-directory: /tmp/screenrecorder-110/champaks_screen_recorder
+        run: |
+          test -d "$ANDROID_NDK_HOME"
+          NDK_VERSION="$(basename "$ANDROID_NDK_HOME")"
+          sed -i "s/ndkVersion = flutter.ndkVersion/ndkVersion = \"$NDK_VERSION\"/" android/app/build.gradle.kts
+          grep ndkVersion android/app/build.gradle.kts
+      - name: Flutter analyzer
+        working-directory: /tmp/screenrecorder-110/champaks_screen_recorder
+        run: flutter analyze --no-fatal-infos lib/main.dart
+      - name: Build debug test APK
+        working-directory: /tmp/screenrecorder-110/champaks_screen_recorder
+        run: flutter build apk --debug --build-name=1.2.0 --build-number=3
+      - name: Disable debug signing for release bundle
+        working-directory: /tmp/screenrecorder-110/champaks_screen_recorder
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('android/app/build.gradle.kts')
+          s=p.read_text()
+          old='signingConfig = signingConfigs.getByName("debug")'
+          assert old in s, 'Flutter Android Gradle template changed'
+          p.write_text(s.replace(old,'signingConfig = null'))
+          PY
+      - name: Build unsigned release AAB
+        working-directory: /tmp/screenrecorder-110/champaks_screen_recorder
+        run: flutter build appbundle --release --build-name=1.2.0 --build-number=3
+      - name: Collect APK and AAB
+        run: |
+          cp /tmp/screenrecorder-110/champaks_screen_recorder/build/app/outputs/flutter-apk/app-debug.apk Champaks-Screen-Recorder-Teaching-v1.2.0-debug.apk
+          cp /tmp/screenrecorder-110/champaks_screen_recorder/build/app/outputs/bundle/release/app-release.aab Champaks-Screen-Recorder-v1.2.0-unsigned.aab
+          ls -lh *.apk *.aab
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Champaks-Screen-Recorder-v1.2.0-APK-and-AAB
+          path: |
+            Champaks-Screen-Recorder-Teaching-v1.2.0-debug.apk
+            Champaks-Screen-Recorder-v1.2.0-unsigned.aab
+          if-no-files-found: error
