@@ -1,0 +1,63 @@
+name: Publish verified Screen Recorder v1.2.6 signed Play AAB
+on:
+  push:
+    branches:
+      - screen-recorder-teaching-edition
+    paths:
+      - .github/workflows/screenrecorder-publish-signed-v126.yml
+      - build-assets/screen_recorder_v126_signatures_patch.zip
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+jobs:
+  publish-aab:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Download successful unsigned Play bundle
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p original
+          gh run download 41287512209 --repo "$GITHUB_REPOSITORY" --name Champaks-Screen-Recorder-v1.2.6-APK-and-AAB --dir original
+          test -s original/Champaks-Screen-Recorder-v1.2.6-unsigned.aab
+      - name: Reconstruct exact previously signed AAB from its signed ZIP records
+        run: |
+          python3 - <<'PY'
+          import hashlib,struct,zipfile
+          from pathlib import Path
+          up=Path('original/Champaks-Screen-Recorder-v1.2.6-unsigned.aab')
+          patch=Path('build-assets/screen_recorder_v126_signatures_patch.zip')
+          dest=Path('Champaks-Screen-Recorder-v1.2.6-Play-Upload-Signed.aab')
+          original=up.read_bytes()
+          digest=lambda x:hashlib.sha256(x).hexdigest()
+          unsigned_expected='c3778a3b5e58076e218f5a1c51b108c13917e2eafcf7a0dec9c0d435ae27815f'
+          signed_expected='881aab7bd4d6c061da3fea5c9789735265f55c03152f6bd27c7248dac0db26d2'
+          assert digest(original)==unsigned_expected, 'Unsigned AAB differs from the verified source build'
+          with zipfile.ZipFile(patch) as z:
+              prefix=z.read('signature-prefix.bin')
+              signed_tail=z.read('signed-central-tail.bin')
+          end=original.rfind(b'PK\x05\x06')
+          assert end>=len(original)-65558, 'Invalid ZIP end record'
+          central=struct.unpack_from('<I',original,end+16)[0]
+          signed=prefix+original[:central]+signed_tail
+          assert digest(signed)==signed_expected, 'Reconstructed bundle does not match verified signed AAB'
+          dest.write_bytes(signed)
+          with zipfile.ZipFile(dest) as a:
+              assert a.testzip() is None, 'AAB CRC mismatch'
+          print('Verified exact signed bundle SHA256: '+digest(signed))
+          print('No private upload key used or stored in this workflow.')
+          PY
+          jarsigner -verify Champaks-Screen-Recorder-v1.2.6-Play-Upload-Signed.aab
+      - name: Add signed AAB to existing public GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release upload screen-recorder-v1.2.6 Champaks-Screen-Recorder-v1.2.6-Play-Upload-Signed.aab \
+            --repo "$GITHUB_REPOSITORY" --clobber
+          gh release view screen-recorder-v1.2.6 --repo "$GITHUB_REPOSITORY" --json assets,url
