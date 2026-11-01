@@ -24,7 +24,7 @@ Certain apps and sensitive content use Android protections that restrict screen 
 
 ## Optional on-screen teaching annotations and visible taps
 
-In version 1.1.0 the optional pen, circle and arrow toolbar may be drawn over other apps only if the user enables Android's **Draw over other apps** special access. This permission allows a visible overlay for instruction; it does not read or upload information from other apps. Tap dots are controlled by the user's Android **Show taps** Developer options setting, not by a background accessibility or input-monitoring service. The user can disable the floating teaching tools at any time. Annotations are included in the screen video saved locally when they are visible to MediaProjection.
+From version 1.2.0, the always-visible recording toolbar (red REC timer, Pause/Resume, Stop & Save, Pen, Circle and Arrow tools) requires Android's **Draw over other apps** special access. Recording does not start without this permission, and the toolbar is removed when recording ends. The drawing toolbar is mandatory during recording and may be moved vertically, but not hidden while recording. This permission allows a visible overlay for instruction; it does not read or upload information from other apps. Tap dots are controlled by the user's Android **Show taps** Developer options setting, not by a background accessibility or input-monitoring service. The user can disable the floating teaching tools at any time. Annotations are included in the screen video saved locally when they are visible to MediaProjection.
 
 ## Future changes
 
