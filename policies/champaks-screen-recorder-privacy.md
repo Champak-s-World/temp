@@ -40,6 +40,10 @@ On Android 14 and later, the user may choose Android's selected-app capture, whi
 
 The app continues to process screen and optional microphone recordings locally, and protected Android windows remain subject to system restrictions.
 
+## Version 1.2.6 — permanent drag handle
+
+The floating recorder toolbar includes a dedicated drag handle that stays visible in expanded and collapsed modes while recording or paused. Users can hold and drag the handle vertically; after release it snaps to the top or bottom edge to keep the video export crop correctly aligned. A tap on the handle switches between top and bottom. Captured frames may briefly be held while repositioning to prevent intermediate toolbar movements from appearing in the recording. The existing recording permissions, local storage and annotation handling are unchanged.
+
 ## Future changes
 
 If we add Internet services, ads, analytics, cloud storage or other data processing, we will update this policy before deploying those features.
