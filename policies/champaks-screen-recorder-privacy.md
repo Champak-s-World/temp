@@ -26,6 +26,10 @@ Certain apps and sensitive content use Android protections that restrict screen 
 
 From version 1.2.0, the always-visible recording toolbar (red REC timer, Pause/Resume, Stop & Save, Pen, Circle and Arrow tools) requires Android's **Draw over other apps** special access. Recording does not start without this permission, and the toolbar is removed when recording ends. The drawing toolbar is mandatory during recording and may be moved vertically, but not hidden while recording. This permission allows a visible overlay for instruction; it does not read or upload information from other apps. Tap dots are controlled by the user's Android **Show taps** Developer options setting, not by a background accessibility or input-monitoring service. The user can disable the floating teaching tools at any time. Annotations are included in the screen video saved locally when they are visible to MediaProjection.
 
+## Entire display recording in v1.2.3
+
+This teaching-focused version requests Android's **entire default display** for each recording, so that app transitions, pop-ups, newly opened windows and other displayed apps can be captured together. Android asks for screen-recording consent each session. Display capture can include sensitive notifications or other private material; users should hide sensitive information before approving recording. Android may restrict or blank protected windows. Recording is saved locally unless the user chooses to share it.
+
 ## Future changes
 
 If we add Internet services, ads, analytics, cloud storage or other data processing, we will update this policy before deploying those features.
