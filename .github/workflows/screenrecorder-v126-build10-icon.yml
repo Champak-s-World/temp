@@ -1,0 +1,130 @@
+name: Screen Recorder v1.2.6 Build 10 correct Play launcher icon
+on:
+  push:
+    branches: [screen-recorder-teaching-edition]
+    paths:
+      - build-assets/champaks_screen_recorder_v126_build10_icon_source.zip
+      - .github/workflows/screenrecorder-v126-build10-icon.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - name: Extract release source
+        run: |
+          mkdir -p /tmp/screenrecorder-110
+          unzip -q build-assets/champaks_screen_recorder_v126_build10_icon_source.zip -d /tmp/screenrecorder-110
+      - name: Prepare Android project
+        working-directory: /tmp/screenrecorder-110/champaks_screen_recorder
+        run: |
+          bash scripts/prepare_android.sh
+          rm -rf android/app/src/main/kotlin/kotlin
+      - name: Select preinstalled Android NDK
+        working-directory: /tmp/screenrecorder-110/champaks_screen_recorder
+        run: |
+          test -d "$ANDROID_NDK_HOME"
+          NDK_VERSION="$(basename "$ANDROID_NDK_HOME")"
+          sed -i "s/ndkVersion = flutter.ndkVersion/ndkVersion = \"$NDK_VERSION\"/" android/app/build.gradle.kts
+          grep ndkVersion android/app/build.gradle.kts
+      - name: Verify hybrid capture boundary
+        working-directory: /tmp/screenrecorder-110/champaks_screen_recorder
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          base=Path('android/app/src/main/kotlin/live/learnwithchampak/champaks_screen_recorder')
+          overlay=(base/'AnnotationOverlay.kt').read_text()
+          assert 'base or WindowManager.LayoutParams.FLAG_SECURE' not in overlay
+          assert 'private fun setDock(' in overlay
+          assert 'private fun applyCollapsedState()' in overlay
+          assert 'miniPause.visibility' in overlay and 'miniStop.visibility' in overlay
+          assert 'installDragHandle(dragHandle)' in overlay
+          assert 'toolbar.addView(dragHandle' in overlay
+          assert 'MotionEvent.ACTION_MOVE' in overlay
+          assert 'setDock(if (centerY < display.y / 2) "top" else "bottom")' in overlay
+          assert 'onToolbarMoving()' in overlay and 'onToolbarSettled()' in overlay
+          renderer=(base/'RecordingCompositor.kt').read_text()
+          assert 'glCopyTexImage2D' in renderer and 'glScissor' in renderer
+          assert 'cropTop = topFraction' in renderer and 'updateToolbarBounds' in renderer
+          svc=(base/'ScreenRecorderService.kt').read_text()
+          assert 'toolbarGeometryReady' in svc and 'configureMode(scope, cleanup)' in svc
+          print('Safe crop and optional smart-repair pipeline verified')
+          PY
+      - name: Verify exact Play launcher art and Android manifest
+        working-directory: /tmp/screenrecorder-110/champaks_screen_recorder
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          icon=Path('branding/play-icon-512.png')
+          assert hashlib.sha256(icon.read_bytes()).hexdigest()=='291571892c24efc14d863f3cf8c992075574f5ad777d0f5e6334d18768931bd5'
+          m=Path('android/app/src/main/AndroidManifest.xml').read_text()
+          assert 'android:icon="@mipmap/ic_launcher"' in m
+          assert 'android:roundIcon="@mipmap/ic_launcher_round"' in m
+          root=Path('android/app/src/main/res')
+          for density in ('mdpi','hdpi','xhdpi','xxhdpi','xxxhdpi'):
+            assert (root/f'mipmap-{density}'/'ic_launcher.png').stat().st_size>500
+            assert (root/f'mipmap-{density}'/'ic_launcher_round.png').stat().st_size>500
+          for name in ('ic_launcher.xml','ic_launcher_round.xml'):
+            assert (root/'mipmap-anydpi-v26'/name).exists()
+          assert (root/'drawable-nodpi'/'ic_launcher_adaptive_foreground.png').read_bytes()==icon.read_bytes()
+          print('Verified same artwork as Play listing; both adaptive and legacy launcher resources present')
+          PY
+      - name: Flutter analyzer
+        working-directory: /tmp/screenrecorder-110/champaks_screen_recorder
+        run: flutter analyze --no-fatal-infos lib/main.dart
+      - name: Build debug test APK
+        working-directory: /tmp/screenrecorder-110/champaks_screen_recorder
+        run: flutter build apk --debug --build-name=1.2.6 --build-number=10
+      - name: Disable debug signing for release bundle
+        working-directory: /tmp/screenrecorder-110/champaks_screen_recorder
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('android/app/build.gradle.kts')
+          s=p.read_text()
+          old='signingConfig = signingConfigs.getByName("debug")'
+          assert old in s, 'Flutter Android Gradle template changed'
+          p.write_text(s.replace(old,'signingConfig = null'))
+          PY
+      - name: Build unsigned release AAB
+        working-directory: /tmp/screenrecorder-110/champaks_screen_recorder
+        run: flutter build appbundle --release --build-name=1.2.6 --build-number=10
+      - name: Verify launcher resources are packaged inside AAB and APK
+        working-directory: /tmp/screenrecorder-110/champaks_screen_recorder
+        run: |
+          python3 - <<'PY'
+          import zipfile
+          apk='build/app/outputs/flutter-apk/app-debug.apk'
+          aab='build/app/outputs/bundle/release/app-release.aab'
+          with zipfile.ZipFile(apk) as z:
+            names=z.namelist()
+            for density in ('mdpi','hdpi','xhdpi','xxhdpi','xxxhdpi'):
+              assert any('mipmap-'+density in n and 'ic_launcher' in n for n in names), 'Missing APK launcher '+density
+          with zipfile.ZipFile(aab) as z:
+            names=z.namelist()
+            images=[n for n in names if n.startswith('base/res/') and n.endswith('.png')]
+            assert len(images)>=5, 'AAB contains no actual launcher PNG assets: '+repr(images)
+            print('AAB packaged launcher PNG assets:',images[:15])
+          PY
+      - name: Collect APK and AAB
+        run: |
+          cp /tmp/screenrecorder-110/champaks_screen_recorder/build/app/outputs/flutter-apk/app-debug.apk Champaks-Screen-Recorder-Teaching-v1.2.6-build10-debug.apk
+          cp /tmp/screenrecorder-110/champaks_screen_recorder/build/app/outputs/bundle/release/app-release.aab Champaks-Screen-Recorder-v1.2.6-build10-unsigned.aab
+          ls -lh *.apk *.aab
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Champaks-Screen-Recorder-v1.2.6-Build10-Icon-Fix-APK-and-AAB
+          path: |
+            Champaks-Screen-Recorder-Teaching-v1.2.6-build10-debug.apk
+            Champaks-Screen-Recorder-v1.2.6-build10-unsigned.aab
+          if-no-files-found: error
