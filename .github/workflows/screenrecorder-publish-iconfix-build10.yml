@@ -1,0 +1,77 @@
+name: Publish v1.2.6 Build 10 signed AAB with corrected icon
+on:
+  push:
+    branches: [screen-recorder-teaching-edition]
+    paths:
+      - build-assets/screen_recorder_v126_build10_signature_records.zip
+      - .github/workflows/screenrecorder-publish-iconfix-build10.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Download the independently verified Build 10 AAB
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p original
+          gh run download 42780814780 --repo "$GITHUB_REPOSITORY" --name Champaks-Screen-Recorder-v1.2.6-Build10-Icon-Fix-APK-and-AAB --dir original
+          test -s original/Champaks-Screen-Recorder-v1.2.6-build10-unsigned.aab
+      - name: Reconstruct byte-identical signed bundle without private keystore
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import struct,zipfile,hashlib
+          unsigned=Path('original/Champaks-Screen-Recorder-v1.2.6-build10-unsigned.aab').read_bytes()
+          digest=lambda b:hashlib.sha256(b).hexdigest()
+          assert digest(unsigned)=='a894bcf649a64638e64194b96d0014ad160bfd84e77662167a15f52e90885b59', 'Build input SHA mismatch'
+          with zipfile.ZipFile('build-assets/screen_recorder_v126_build10_signature_records.zip') as z:
+            prefix=z.read('signature-prefix.bin')
+            tail=z.read('signed-central-tail.bin')
+            assert z.read('unsigned-sha256.txt').decode()==digest(unsigned)
+          end=unsigned.rfind(b'PK\x05\x06')
+          assert end>=len(unsigned)-65558, 'Invalid source AAB'
+          central=struct.unpack_from('<I',unsigned,end+16)[0]
+          signed=prefix+unsigned[:central]+tail
+          assert digest(signed)=='7a4d22b8de136c77f4baa84b0cd56ef9e2cca259b2e25be22676f96de71c974f', 'Signed output SHA mismatch'
+          path=Path('Champaks-Screen-Recorder-v1.2.6-build10-Play-Upload-Signed.aab')
+          path.write_bytes(signed)
+          with zipfile.ZipFile(path) as z:
+            assert z.testzip() is None
+            icons=[n for n in z.namelist() if n.startswith('base/res/') and ('ic_launcher' in n) and n.endswith('.png')]
+            assert len(icons)>=11, f'Missing launcher assets {icons!r}'
+          with zipfile.ZipFile('build-assets/champaks_screen_recorder_v126_build10_icon_source.zip') as source:
+            icon=source.read('champaks_screen_recorder/branding/play-icon-512.png')
+          assert digest(icon)=='291571892c24efc14d863f3cf8c992075574f5ad777d0f5e6334d18768931bd5'
+          Path('Champaks-Screen-Recorder-v1.2.6-build10-correct-icon-512.png').write_bytes(icon)
+          print('Exact original signed AAB reconstructed, checked and icon resources verified:',digest(signed))
+          PY
+          jarsigner -verify Champaks-Screen-Recorder-v1.2.6-build10-Play-Upload-Signed.aab
+          keytool -printcert -jarfile Champaks-Screen-Recorder-v1.2.6-build10-Play-Upload-Signed.aab | grep -F '3B:A8:E3:0D:D8:F1:61:32:80:A4:50:A2:50:45:36:86:E2:56:98:E2:11:93:28:00:37:3B:2E:AD:57:DE:69:6D'
+      - name: Publish signed Play upload AAB as a downloadable public prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="screen-recorder-v1.2.6-build10-iconfix"
+          files=(
+            Champaks-Screen-Recorder-v1.2.6-build10-Play-Upload-Signed.aab
+            Champaks-Screen-Recorder-v1.2.6-build10-correct-icon-512.png
+          )
+          if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$tag" "${files[@]}" --clobber --repo "$GITHUB_REPOSITORY"
+          else
+            gh release create "$tag" "${files[@]}" --repo "$GITHUB_REPOSITORY" \
+              --title "Champak's Screen Recorder v1.2.6 - Build 10 (Correct Icon)" \
+              --target screen-recorder-teaching-edition \
+              --prerelease \
+              --notes "Signed Google Play AAB, versionName 1.2.6 and versionCode 10. Launcher icon now explicitly declared in AndroidManifest and includes correct classic and adaptive icon images matching Play Store artwork. Verified with the same upload certificate as build 9. No recorder feature changes. This is for Google Play Console testing and cannot be installed directly on Android. The signing key is not distributed."
+          fi
+          gh release view "$tag" --repo "$GITHUB_REPOSITORY" --json url,assets
